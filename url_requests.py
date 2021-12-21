@@ -45,7 +45,7 @@ def get_requests_random_photo():
         print(f'url: {i["url"]}')
 
 def get_requests_todos_by_user_id(user_id,is_arg=True):
-    url = f'https://jsonplaceholder.typicode.com/todos?userId=1&completed={str(is_arg).lower()}'
+    url = f'https://jsonplaceholder.typicode.com/todos?userId={user_id}&completed={str(is_arg).lower()}'
     rec = requests.get(url)
     rec_data: dict = rec.json()
     return rec_data
