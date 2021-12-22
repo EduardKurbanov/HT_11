@@ -11,25 +11,25 @@ def get_requests_id():
     return rec_data
 
 
-def get_user_info_by_id(user_id):
+def get_requests_user_info_by_id(user_id):
     rec = requests.get(BASE_URL + f"/users?id={user_id}")
     rec_data: dict = rec.json()
     return rec_data
 
 
-def get_post_by_user_id(user_id):
+def get_requests_post_by_user_id(user_id):
     rec = requests.get(BASE_URL + f"/posts?userId={user_id}")
     rec_data: dict = rec.json()
     return rec_data
 
 
-def get_post_by_post_id(post_id):
+def get_requests_post_by_post_id(post_id):
     rec = requests.get(BASE_URL + f"/posts?id={post_id}")
     rec_data: dict = rec.json()
     return rec_data
 
 
-def get_post_comments_by_post_id(post_id):
+def get_requests_post_comments_by_post_id(post_id):
     rec = requests.get(BASE_URL + f"/comments?postId={post_id}")
     rec_data: dict = rec.json()
     return rec_data

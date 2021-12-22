@@ -15,8 +15,9 @@
    4. Вивести URL рандомної картинки
 """
 
-from url_requests import get_requests_id, get_user_info_by_id, get_post_by_post_id, get_post_by_user_id, \
-    get_post_comments_by_post_id, get_requests_todos_by_user_id, get_requests_random_photo
+from url_requests import get_requests_id, get_requests_user_info_by_id, get_requests_post_by_post_id, \
+    get_requests_post_by_user_id, \
+    get_requests_post_comments_by_post_id, get_requests_todos_by_user_id, get_requests_random_photo
 
 
 def get_users_list():
@@ -30,7 +31,7 @@ def get_users_list():
 
 
 def get_short_user_info_by_id(user_id):
-    for i in get_user_info_by_id(user_id):
+    for i in get_requests_user_info_by_id(user_id):
         return f'id: {i["id"]},\n' \
                f'name: {i["name"]},\n' \
                f'username: {i["username"]}\n'
@@ -39,7 +40,7 @@ def get_short_user_info_by_id(user_id):
 def full_inf_user(user_id):
     pars: str = None
 
-    for i in get_user_info_by_id(user_id):
+    for i in get_requests_user_info_by_id(user_id):
         pars = f'id user: {i["id"]}\n' \
                f'name: {i["name"]}\n' \
                f'nikname: {i["username"]}\n' \
@@ -65,15 +66,15 @@ def full_inf_user(user_id):
 def get_post_user(user_id):
     pars: str = None
 
-    for i in get_post_by_user_id(user_id):
+    for i in get_requests_post_by_user_id(user_id):
         pars = f'Post ID: {i["id"]}, title: {i["title"]}'
-    print(pars)
+        print(pars)
 
 
 def get_user_post_id_range(user_id):
     post_id_list: list = []
 
-    for i in get_post_by_user_id(user_id):
+    for i in get_requests_post_by_user_id(user_id):
         post_id_list.append(i["id"])
 
     return int(min(post_id_list)), int(max(post_id_list))
@@ -82,13 +83,13 @@ def get_user_post_id_range(user_id):
 def get_post_info_by_post_id(post_id):
     pars: str = None
     comment_id_list: list = []
-    comments_list: dict = get_post_comments_by_post_id(post_id)
+    comments_list: dict = get_requests_post_comments_by_post_id(post_id)
     comments_num: int = len(comments_list)
 
     for i in comments_list:
         comment_id_list.append(i["id"])
 
-    for i in get_post_by_post_id(post_id):
+    for i in get_requests_post_by_post_id(post_id):
         pars = f'Post ID: {i["id"]},\n' \
                f'title: {i["title"]},\n' \
                f'{">" * 30}\n' \
@@ -97,7 +98,7 @@ def get_post_info_by_post_id(post_id):
                f'comments num: {comments_num},\n' \
                f'comments list: {comment_id_list}'
 
-    print(pars)
+        print(pars)
 
 
 def get_todos(user_id, is_arg=True):
@@ -119,9 +120,8 @@ def get_todos(user_id, is_arg=True):
 def consol_menu():
     while True:
         try:
-            if input("want to continue y/n: ").lower() == "y":
+            if input("Want to continue y/n -> ").lower() == "y":
                 get_users_list()
-
                 in_id = input("enter the number id -> ")
                 if int(in_id) in range(len(get_requests_id()) + 1):
                     get_short_user_info_by_id(in_id)
@@ -135,18 +135,44 @@ def consol_menu():
 
             while True:
                 print("*" * 50)
-                in_namb = input("1. Information about koristuvach\n"
+                in_namb = input("1. Information about user\n"
                                 "2. Post.\n"
                                 "3. Todos\n"
                                 "4. Enter URL of a random image\n"
-                                "5. Exit.\n"
+                                "5. Back to menu.\n"
                                 "choose -> ")
+
                 print("*" * 30)
                 if int(in_namb) == 1:
                     full_inf_user(in_id)
 
                 elif int(in_namb) == 2:
-                    get_post_info_by_post_id(in_id)
+                    min_id, max_id = get_user_post_id_range(in_id)
+                    print("-----transcript of posts of koristuvach-----")
+                    get_post_user(in_id)
+
+                    while True:
+                        try:
+                            print("-----if you want to return to the menu, click y/n.-----")
+                            in_post_id = input("enter ID number to view -> ")
+                            if in_post_id.lower() == "y":
+                                consol_menu()
+
+                            elif in_post_id.lower() == "n":
+                                continue
+
+                            # else:
+                            #     print(f"entered incorrect y/n- > {in_post_id}")
+
+                            if int(in_post_id) in range(min_id, max_id + 1):
+                                print("-----information about a specific post-----")
+                                get_post_info_by_post_id(in_post_id)
+
+                            else:
+                                print(f"entered incorrect Post ID - > {in_post_id}")
+
+                        except Exception as err:
+                            print(f"error -> {err}")
 
                 elif int(in_namb) == 3:
                     get_todos(in_id, False)
